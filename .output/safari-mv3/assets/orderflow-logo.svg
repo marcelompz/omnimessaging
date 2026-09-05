@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 130" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@1,800&amp;family=Inter:wght@600&amp;display=swap');
+      .brand-order {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        font-weight: 800;
+        font-style: italic;
+        font-size: 78px;
+        fill: #3E1B59;
+        letter-spacing: -2px;
+      }
+      .brand-flow {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        font-weight: 800;
+        font-style: italic;
+        font-size: 78px;
+        fill: #009DA0;
+        letter-spacing: -2px;
+      }
+      .brand-sub {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        fill: #667085;
+        letter-spacing: 9px;
+      }
+    </style>
+  </defs>
+
+  <!-- Typography: OrderFlow -->
+  <text x="15" y="76">
+    <tspan class="brand-order">Order</tspan><tspan class="brand-flow">Flow</tspan>
+  </text>
+
+  <!-- Bottom Divider Line with Accent Notch -->
+  <line x1="18" y1="104" x2="160" y2="104" stroke="#3E1B59" stroke-width="2"/>
+  <path d="M 160 104 L 166 100 L 172 104" fill="none" stroke="#3E1B59" stroke-width="2"/>
+  <line x1="172" y1="104" x2="430" y2="104" stroke="#E2E8F0" stroke-width="1.5"/>
+  <line x1="430" y1="104" x2="570" y2="104" stroke="#009DA0" stroke-width="2"/>
+
+  <!-- Subtitle -->
+  <text x="75" y="122" class="brand-sub">HIGH-SPEED OMNI-SYSTEM</text>
+</svg>

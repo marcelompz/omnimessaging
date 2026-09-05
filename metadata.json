@@ -1,0 +1,6 @@
+{
+  "name": "OmniFlow - Extensión WhatsApp Web & OmniBot Copilot",
+  "description": "Terminal operativa omnicanal para WhatsApp Web con consola de operador, copiloto IA OmniBot, soporte cross-browser (Chrome, Firefox, Edge, Safari, Brave) y branding oficial OrderFlow.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" fill="none">
+  <defs>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4B1E6D"/>
+      <stop offset="100%" stop-color="#341350"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A29C"/>
+      <stop offset="100%" stop-color="#008080"/>
+    </linearGradient>
+    <linearGradient id="speedGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#0E507B"/>
+      <stop offset="100%" stop-color="#5599B8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Ring Top Arc (Deep Purple) -->
+  <path d="M 125 105 A 140 140 0 1 1 370 175 C 370 162 360 152 346 152 C 332 152 322 162 322 175 A 92 92 0 1 0 158 135 Z" fill="url(#purpleGrad)"/>
+
+  <!-- Outer Ring Bottom Arc (Vibrant Teal) -->
+  <path d="M 120 250 A 140 140 0 0 0 368 190 C 368 203 358 213 344 213 C 330 213 320 203 320 190 A 92 92 0 0 1 154 225 Z" fill="url(#tealGrad)"/>
+
+  <!-- Speed Trail Left Horizontal Bars -->
+  <!-- Top bar -->
+  <rect x="58" y="142" width="130" height="15" rx="7.5" fill="url(#speedGrad)"/>
+  <circle cx="48" cy="149.5" r="7.5" fill="#0E507B"/>
+
+  <!-- Middle bar -->
+  <rect x="98" y="172" width="90" height="15" rx="7.5" fill="url(#speedGrad)"/>
+  <circle cx="76" cy="179.5" r="7.5" fill="#0E507B"/>
+
+  <!-- Bottom bar -->
+  <rect x="58" y="202" width="105" height="15" rx="7.5" fill="url(#speedGrad)"/>
+  <circle cx="28" cy="209.5" r="7.5" fill="#0E507B"/>
+
+  <!-- Central Speed Arrow Tip (Connecting forward) -->
+  <path d="M 175 142 L 210 179.5 L 175 217 L 195 217 L 235 179.5 L 195 142 Z" fill="#5E9DBB"/>
+
+  <!-- Large Bold Chevron (Purple) -->
+  <path d="M 215 118 L 315 180 L 215 242 L 255 242 L 340 180 L 255 118 Z" fill="url(#purpleGrad)"/>
+</svg>

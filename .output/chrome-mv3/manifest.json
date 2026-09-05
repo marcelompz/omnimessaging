@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "OrderFlow • WhatsApp Web & OmniBot Copilot",
+  "version": "2.5.0",
+  "description": "Terminal operativa omnicanal para WhatsApp Web con consola de operador, copiloto IA OmniBot, protocolo HUMAN_TAKEOVER, ficha 360°, POS y agendamiento.",
+  "icons": {
+    "16": "assets/orderflow-icon.svg",
+    "32": "assets/orderflow-icon.svg",
+    "48": "assets/orderflow-icon.svg",
+    "128": "assets/orderflow-icon.svg"
+  },
+  "action": {
+    "default_title": "OrderFlow Extension",
+    "default_popup": "popup.html",
+    "default_icon": "assets/orderflow-icon.svg"
+  },
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*",
+    "*://api.omniflow.cloud/*",
+    "*://localhost/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "js": [
+        "content-script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/*",
+        "styles/*"
+      ],
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
