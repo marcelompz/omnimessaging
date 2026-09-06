@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { buildSync } from "esbuild";
 import { getManifestForTarget, BrowserEngine } from "../src/services/crossBrowser";
 
 const TARGETS: BrowserEngine[] = ["chrome", "firefox", "edge", "safari"];
@@ -18,6 +19,48 @@ function buildTarget(engine: BrowserEngine) {
   const assetsDir = path.join(outputDir, "assets");
   if (!fs.existsSync(assetsDir)) {
     fs.mkdirSync(assetsDir, { recursive: true });
+  }
+
+  // Bundle background.ts and content-script.ts into target output directory using esbuild
+  const backgroundTs = path.join(process.cwd(), "src", "background.ts");
+  if (fs.existsSync(backgroundTs)) {
+    buildSync({
+      entryPoints: [backgroundTs],
+      bundle: true,
+      outfile: path.join(outputDir, "background.js"),
+      target: "es2020",
+      format: "iife",
+    });
+  }
+
+  const contentScriptTs = path.join(process.cwd(), "src", "content-script.ts");
+  if (fs.existsSync(contentScriptTs)) {
+    buildSync({
+      entryPoints: [contentScriptTs],
+      bundle: true,
+      outfile: path.join(outputDir, "content-script.js"),
+      target: "es2020",
+      format: "iife",
+      define: {
+        "process.env.NODE_ENV": '"production"',
+      },
+      loader: {
+        ".css": "text",
+        ".png": "dataurl",
+        ".svg": "text",
+      },
+    });
+  }
+
+  // Copy Vite dist files (index.html as popup.html, JS/CSS bundles)
+  const distDir = path.join(process.cwd(), "dist");
+  if (fs.existsSync(distDir)) {
+    fs.cpSync(distDir, outputDir, { recursive: true });
+    // Rename index.html to popup.html if present
+    const distIndexPath = path.join(outputDir, "index.html");
+    if (fs.existsSync(distIndexPath)) {
+      fs.renameSync(distIndexPath, path.join(outputDir, "popup.html"));
+    }
   }
 
   // Copy brand assets if available

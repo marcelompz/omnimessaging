@@ -51,7 +51,11 @@ import {
   Globe,
 } from "lucide-react";
 
-export default function App() {
+interface AppProps {
+  isEmbedded?: boolean;
+}
+
+export default function App({ isEmbedded = false }: AppProps) {
   // Config & storage
   const [config, setConfig] = useState<OmniFlowConfig>(storageService.getConfig());
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -443,6 +447,90 @@ export default function App() {
       c.phone.includes(chatSearch) ||
       c.lastMessage.toLowerCase().includes(chatSearch.toLowerCase())
   );
+
+  if (isEmbedded) {
+    return (
+      <div className="h-screen font-sans select-none pointer-events-auto">
+        <OmniFlowSidePanel
+          isOpen={sidePanelOpen}
+          onToggleOpen={() => setSidePanelOpen(!sidePanelOpen)}
+          config={config}
+          activeCustomer={activeCustomer}
+          botMode={activeChat ? botModes[activeChat.id] || "ACTIVE" : "OFFLINE"}
+          onChangeBotMode={(newMode) => {
+            if (!activeChat) return;
+            setBotModes((prev) => ({ ...prev, [activeChat.id]: newMode }));
+          }}
+          copilotSuggestions={copilotSuggestions}
+          onSelectCopilotSuggestion={handleSelectSuggestion}
+          onSaveNotes={(noteContent) => {
+            if (!activeCustomer) return;
+            setActiveCustomer((prev) => ({
+              ...prev!,
+              notes: [
+                {
+                  id: `n_${Date.now()}`,
+                  author: config.operatorName,
+                  content: noteContent,
+                  createdAt: new Date().toISOString().slice(0, 10),
+                },
+                ...prev!.notes,
+              ],
+            }));
+          }}
+          products={products}
+          cart={cart}
+          onAddToCart={handleAddToCart}
+          onUpdateQty={handleUpdateQty}
+          onRemoveItem={handleRemoveItem}
+          onClearCart={handleClearCart}
+          onPasteQuoteToChat={handlePasteToEditor}
+          onEmitPosOrder={handleEmitPosOrder}
+          pointsDiscount={pointsDiscount}
+          slots={slots}
+          professionals={INITIAL_PROFESSIONALS}
+          locations={INITIAL_LOCATIONS}
+          activeAppointments={activeAppointments.filter((a) => a.customerPhone === (activeChat?.phone || ""))}
+          onBookAppointment={handleBookAppointment}
+          onCancelAppointment={handleCancelAppointment}
+          onPasteSlotsToChat={handlePasteToEditor}
+          loyalty={activeChat?.phone ? loyaltyAccounts[activeChat.phone] || null : null}
+          onApplyRewardDiscount={handleApplyRewardDiscount}
+          onCreditCourtesyPoints={handleCreditCourtesyPoints}
+          giveaways={INITIAL_GIVEAWAYS}
+          biolinks={INITIAL_BIOLINKS}
+          onPasteCouponToChat={handlePasteToEditor}
+          onPasteLinkToChat={handlePasteToEditor}
+          cannedResponses={INITIAL_CANNED_RESPONSES}
+          onPasteResponse={handlePasteToEditor}
+        />
+
+        {/* Settings Modal */}
+        <ExtensionPopupModal
+          isOpen={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
+          onSaved={(newCfg) => setConfig(newCfg)}
+        />
+
+        {/* Quick Customer Registration Modal */}
+        <QuickCustomerModal
+          isOpen={showQuickRegisterModal}
+          phone={activeChat?.phone || ""}
+          defaultName={activeChat?.name || ""}
+          onClose={() => setShowQuickRegisterModal(false)}
+          onSaveCustomer={handleSaveQuickCustomer}
+        />
+
+        {/* Cross-Browser Multi-Target Export & Diagnostics Modal */}
+        <CrossBrowserExportModal
+          isOpen={showCrossBrowserModal}
+          onClose={() => setShowCrossBrowserModal(false)}
+          activeEngine={targetEngine}
+          onSelectEngine={(engine) => setTargetEngine(engine)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-900 overflow-hidden font-sans select-none">
