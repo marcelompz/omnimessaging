@@ -7,9 +7,10 @@ const TARGETS: BrowserEngine[] = ["chrome", "firefox", "edge", "safari"];
 
 function buildTarget(engine: BrowserEngine) {
   const outputDir = path.join(process.cwd(), ".output", `${engine}-mv3`);
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
+  if (fs.existsSync(outputDir)) {
+    fs.rmSync(outputDir, { recursive: true, force: true });
   }
+  fs.mkdirSync(outputDir, { recursive: true });
 
   // Write manifest.json
   const manifest = getManifestForTarget(engine);

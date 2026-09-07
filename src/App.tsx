@@ -58,6 +58,7 @@ interface AppProps {
 export default function App({ isEmbedded = false }: AppProps) {
   // Config & storage
   const [config, setConfig] = useState<OmniFlowConfig>(storageService.getConfig());
+  const [autoTakeover, setAutoTakeover] = useState(config.autoTakeoverOnType);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showQuickRegisterModal, setShowQuickRegisterModal] = useState(false);
   const [showCrossBrowserModal, setShowCrossBrowserModal] = useState(false);
@@ -117,7 +118,16 @@ export default function App({ isEmbedded = false }: AppProps) {
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const activeChat = conversations.find((c) => c.id === activeChatId) || conversations[0];
+  const activeChat = isEmbedded && domActiveChat
+    ? {
+        id: `dom_${domActiveChat.phone || domActiveChat.name}`,
+        name: domActiveChat.name,
+        phone: domActiveChat.phone,
+        unread: false,
+        isGroup: domActiveChat.isGroup,
+        messages: [],
+      }
+    : conversations.find((c) => c.id === activeChatId) || conversations[0];
   const activeCustomer = activeChat?.phone ? customers[activeChat.phone] || null : null;
   const currentBotMode = botModes[activeChat.id] || "ACTIVE";
   const currentCopilot = copilotSuggestions[activeChat.id] || null;
@@ -130,6 +140,61 @@ export default function App({ isEmbedded = false }: AppProps) {
   useEffect(() => {
     scrollToBottom();
   }, [activeChat?.messages]);
+
+  // Scraped active chat from WhatsApp Web DOM header
+  const [domActiveChat, setDomActiveChat] = useState<{ name: string; phone: string; isGroup: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!isEmbedded) return;
+
+    const checkDomChat = () => {
+      const chatInfo = whatsappDom.getActiveChatInfo();
+      if (chatInfo) {
+        setDomActiveChat(chatInfo);
+      }
+    };
+
+    checkDomChat();
+
+    const mainHeader = document.querySelector("#main header");
+    if (mainHeader) {
+      const observer = new MutationObserver(() => {
+        checkDomChat();
+      });
+      observer.observe(mainHeader, { childList: true, subtree: true, attributes: true });
+      whatsappDom.registerObserver(observer);
+      return () => observer.disconnect();
+    }
+  }, [isEmbedded]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "ORDERFLOW_OPEN_SETTINGS") {
+        setShowSettingsModal(true);
+      } else if (event.data?.type === "ORDERFLOW_OPEN_CROSSBROWSER") {
+        setShowCrossBrowserModal(true);
+      }
+    };
+
+    const handleCustomSettings = () => setShowSettingsModal(true);
+    const handleCustomBrowser = () => setShowCrossBrowserModal(true);
+
+    window.addEventListener("message", handleMessage);
+    window.addEventListener("omniflow:open_settings", handleCustomSettings);
+    window.addEventListener("omniflow:open_crossbrowser", handleCustomBrowser);
+
+    const unsubscribeConfig = storageService.subscribe((updatedConfig) => {
+      setConfig(updatedConfig);
+      setAutoTakeover(updatedConfig.autoTakeoverOnType);
+    });
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("omniflow:open_settings", handleCustomSettings);
+      window.removeEventListener("omniflow:open_crossbrowser", handleCustomBrowser);
+      unsubscribeConfig();
+    };
+  }, []);
 
   // Trigger Copilot analysis when active chat changes or receives new message
   useEffect(() => {
@@ -285,6 +350,30 @@ export default function App({ isEmbedded = false }: AppProps) {
           )
         );
       }, 1800);
+    }
+  };
+
+  const handleGenerateCopilot = async () => {
+    if (!activeChat || activeChat.isGroup) return;
+    setIsAiThinking(true);
+    try {
+      const suggestion = await omniBotService.requestCopilotAnalysis({
+        contactName: activeChat.name,
+        phone: activeChat.phone,
+        messageHistory: activeChat.messages,
+        customerData: activeCustomer,
+        catalogContext: { productsCount: products.length },
+        botMode: currentBotMode,
+      });
+
+      setCopilotSuggestions((prev) => ({
+        ...prev,
+        [activeChat.id]: suggestion,
+      }));
+    } catch (err) {
+      console.error("Error refreshing Copilot:", err);
+    } finally {
+      setIsAiThinking(false);
     }
   };
 
@@ -450,33 +539,71 @@ export default function App({ isEmbedded = false }: AppProps) {
 
   if (isEmbedded) {
     return (
-      <div className="h-screen font-sans select-none pointer-events-auto">
+      <div className="h-screen w-full font-sans select-none pointer-events-auto overflow-hidden bg-transparent">
         <OmniFlowSidePanel
           isOpen={sidePanelOpen}
           onToggleOpen={() => setSidePanelOpen(!sidePanelOpen)}
-          config={config}
-          activeCustomer={activeCustomer}
-          botMode={activeChat ? botModes[activeChat.id] || "ACTIVE" : "OFFLINE"}
+          onOpenSettings={() => setShowSettingsModal(true)}
+          onOpenCrossBrowser={() => setShowCrossBrowserModal(true)}
+          targetEngine={targetEngine}
+          activeChatTitle={activeChat ? activeChat.name : "WhatsApp Web Active Chat"}
+          activeChatPhone={activeChat ? activeChat.phone : ""}
+          isGroup={false}
+          botMode={activeChat ? botModes[activeChat.id] || "ACTIVE" : "ACTIVE"}
           onChangeBotMode={(newMode) => {
             if (!activeChat) return;
             setBotModes((prev) => ({ ...prev, [activeChat.id]: newMode }));
           }}
-          copilotSuggestions={copilotSuggestions}
-          onSelectCopilotSuggestion={handleSelectSuggestion}
-          onSaveNotes={(noteContent) => {
-            if (!activeCustomer) return;
-            setActiveCustomer((prev) => ({
-              ...prev!,
-              notes: [
-                {
-                  id: `n_${Date.now()}`,
-                  author: config.operatorName,
-                  content: noteContent,
-                  createdAt: new Date().toISOString().slice(0, 10),
+          isAiThinking={isAiThinking}
+          copilotSuggestion={copilotSuggestions[activeChat?.id || ""] || null}
+          onPasteToEditor={handlePasteToEditor}
+          onSendDirectly={(text) => handleSendMessage(text)}
+          onDiscardSuggestion={() => {
+            if (activeChat) {
+              setCopilotSuggestions((prev) => {
+                const copy = { ...prev };
+                delete copy[activeChat.id];
+                return copy;
+              });
+            }
+          }}
+          onRefreshCopilot={handleGenerateCopilot}
+          autoTakeover={autoTakeover}
+          onToggleAutoTakeover={async (val) => {
+            const updated = await storageService.saveConfig({ autoTakeoverOnType: val });
+            setAutoTakeover(val);
+          }}
+          systemPrompt={config.systemPromptBase}
+          onUpdateSystemPrompt={async (prompt) => {
+            setConfig((c) => ({ ...c, systemPromptBase: prompt }));
+            await storageService.saveConfig({ systemPromptBase: prompt });
+          }}
+          customer={activeCustomer}
+          onOpenQuickRegister={() => setShowQuickRegisterModal(true)}
+          onAddNote={(noteContent) => {
+            if (!activeChat?.phone) return;
+            setCustomers((prev) => {
+              const existing = prev[activeChat.phone] || {
+                phone: activeChat.phone,
+                name: activeChat.name,
+                notes: [],
+              } as ICustomerProfile;
+              return {
+                ...prev,
+                [activeChat.phone]: {
+                  ...existing,
+                  notes: [
+                    {
+                      id: `n_${Date.now()}`,
+                      author: config.operatorName,
+                      content: noteContent,
+                      createdAt: new Date().toISOString().slice(0, 10),
+                    },
+                    ...existing.notes,
+                  ],
                 },
-                ...prev!.notes,
-              ],
-            }));
+              };
+            });
           }}
           products={products}
           cart={cart}
@@ -950,9 +1077,10 @@ export default function App({ isEmbedded = false }: AppProps) {
             }
           }}
           autoTakeover={config.autoTakeoverOnType}
-          onToggleAutoTakeover={(val) => {
-            const updated = storageService.saveConfig({ autoTakeoverOnType: val });
-            setConfig(updated);
+          onToggleAutoTakeover={async (val) => {
+            await storageService.saveConfig({ autoTakeoverOnType: val });
+            setConfig((c) => ({ ...c, autoTakeoverOnType: val }));
+            setAutoTakeover(val);
           }}
           systemPrompt={systemPrompts[activeChat.id] || "Atender con amabilidad y precisión."}
           onUpdateSystemPrompt={(p) => {

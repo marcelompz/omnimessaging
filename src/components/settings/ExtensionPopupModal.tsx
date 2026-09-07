@@ -25,9 +25,9 @@ export const ExtensionPopupModal: React.FC<ExtensionPopupModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = storageService.saveConfig({
+    const updated = await storageService.saveConfig({
       baseUrl,
       tenantId,
       operatorToken,

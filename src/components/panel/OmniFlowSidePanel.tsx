@@ -157,11 +157,11 @@ export const OmniFlowSidePanel: React.FC<OmniFlowSidePanelProps> = ({
         type="button"
         onClick={onToggleOpen}
         className="fixed right-0 top-20 z-40 bg-[#3B1C54] text-white p-2.5 rounded-l-2xl shadow-xl flex flex-col items-center gap-1.5 hover:bg-[#4A246B] transition-all cursor-pointer border-l border-y border-teal-500/40"
-        title="Abrir Consola OrderFlow"
+        title="Abrir Consola OmniFlow"
       >
-        <img src="/assets/orderflow-icon.svg" alt="OrderFlow" className="w-4 h-4 object-contain" />
+        <img src="/assets/orderflow-icon.svg" alt="OmniFlow" className="w-4 h-4 object-contain" />
         <span className="text-[10px] font-bold uppercase [writing-mode:vertical-lr] tracking-widest text-teal-300">
-          OrderFlow
+          OmniFlow
         </span>
         <ChevronLeft className="w-4 h-4 text-purple-200 mt-1" />
       </button>
@@ -171,34 +171,34 @@ export const OmniFlowSidePanel: React.FC<OmniFlowSidePanelProps> = ({
   const tabs: Array<{ id: PanelTab; label: string; icon: React.ReactNode; badge?: number }> = [
     { id: "copilot", label: "OmniBot", icon: <Bot className="w-3.5 h-3.5" /> },
     { id: "customer", label: "Ficha 360°", icon: <User className="w-3.5 h-3.5" /> },
-    { id: "catalog", label: "Catálogo & POS", icon: <ShoppingBag className="w-3.5 h-3.5" />, badge: cart.length > 0 ? cart.length : undefined },
+    { id: "catalog", label: "Catálogo y venta", icon: <ShoppingBag className="w-3.5 h-3.5" />, badge: cart.length > 0 ? cart.length : undefined },
     { id: "agenda", label: "Agenda", icon: <Calendar className="w-3.5 h-3.5" />, badge: activeAppointments.length > 0 ? activeAppointments.length : undefined },
-    { id: "loyalty", label: "Loyalty", icon: <Award className="w-3.5 h-3.5" /> },
-    { id: "marketing", label: "Marketing", icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { id: "loyalty", label: "Fidelización", icon: <Award className="w-3.5 h-3.5" /> },
+    { id: "marketing", label: "Mercadotecnia", icon: <Sparkles className="w-3.5 h-3.5" /> },
     { id: "shortcuts", label: "Atajos", icon: <Zap className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <aside
       id="omniflow-sidepanel-root"
-      className="w-96 shrink-0 bg-slate-100 border-l border-slate-300 h-full flex flex-col shadow-2xl z-30 transition-all duration-200 ease-in-out relative select-none"
+      className="w-full shrink-0 bg-slate-100 border-l border-slate-300 h-full flex flex-col shadow-2xl z-30 transition-all duration-200 ease-in-out relative select-none"
     >
       {/* Top extension bar with branding & connection */}
       <div className="p-2.5 bg-[#3B1C54] text-white flex items-center justify-between border-b border-purple-900/60 shadow-xs">
         <div className="flex items-center gap-2">
           <img
             src="/assets/orderflow-icon.svg"
-            alt="OrderFlow"
+            alt="OmniFlow"
             className="w-7 h-7 object-contain drop-shadow-xs"
           />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-xs tracking-tight">OrderFlow</span>
+              <span className="font-extrabold text-xs tracking-tight">OmniFlow</span>
               <span className="text-[9px] bg-teal-400/20 text-teal-300 px-1.5 py-0.2 rounded font-mono font-semibold">
                 {targetEngine.toUpperCase()} MV3
               </span>
             </div>
-            <p className="text-[9.5px] text-purple-200 leading-tight">High-Speed Omni-System</p>
+            <p className="text-[9.5px] text-purple-200 leading-tight">Omnicanalidad de Alta Velocidad</p>
           </div>
         </div>
 

@@ -126,6 +126,41 @@ export const whatsappDom = {
   },
 
   /**
+   * Scrapes active chat header info from #main header dynamically
+   */
+  getActiveChatInfo(): { name: string; phone: string; isGroup: boolean } | null {
+    const mainHeader = document.querySelector(WHATSAPP_SELECTORS.CHAT_HEADER);
+    if (!mainHeader) return null;
+
+    const titleEl =
+      document.querySelector(WHATSAPP_SELECTORS.CHAT_TITLE) ||
+      mainHeader.querySelector("span[title]");
+    const subtitleEl =
+      document.querySelector(WHATSAPP_SELECTORS.CHAT_SUBTITLE) ||
+      mainHeader.querySelector("span[dir='auto']");
+
+    const rawTitle = titleEl?.getAttribute("title") || titleEl?.textContent?.trim() || "";
+    const rawSubtitle = subtitleEl?.getAttribute("title") || subtitleEl?.textContent?.trim() || "";
+
+    if (!rawTitle) return null;
+
+    // Detect phone number in title or subtitle
+    const phoneMatch = (rawTitle + " " + rawSubtitle).match(/\+?\d[\d\s\-\(\)]{8,}\d/);
+    let extractedPhone = "";
+    if (phoneMatch) {
+      extractedPhone = "+" + phoneMatch[0].replace(/\D/g, "");
+    }
+
+    const isGroup = rawSubtitle.toLowerCase().includes("grupo") || rawSubtitle.toLowerCase().includes("group");
+
+    return {
+      name: rawTitle,
+      phone: extractedPhone,
+      isGroup,
+    };
+  },
+
+  /**
    * Registers a managed MutationObserver and prevents memory leaks
    */
   registerObserver(observer: MutationObserver) {
