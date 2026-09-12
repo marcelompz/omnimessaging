@@ -13284,7 +13284,7 @@
 
   // src/services/storage.ts
   var DEFAULT_CONFIG = {
-    baseUrl: "https://api.omniflow.cloud",
+    baseUrl: "",
     tenantId: "",
     operatorToken: "",
     operatorName: "Sin sesi\xF3n / Configurar en extensi\xF3n",
@@ -17058,6 +17058,7 @@ ${link.displayText}
       }
     ]);
     const [loyaltyAccounts, setLoyaltyAccounts] = (0, import_react16.useState)(INITIAL_LOYALTY);
+    const [domActiveChat, setDomActiveChat] = (0, import_react16.useState)(null);
     const [messageInput, setMessageInput] = (0, import_react16.useState)("");
     const messagesEndRef = (0, import_react16.useRef)(null);
     const activeChat = isEmbedded && domActiveChat ? {
@@ -17077,7 +17078,6 @@ ${link.displayText}
     (0, import_react16.useEffect)(() => {
       scrollToBottom();
     }, [activeChat?.messages]);
-    const [domActiveChat, setDomActiveChat] = (0, import_react16.useState)(null);
     (0, import_react16.useEffect)(() => {
       if (!isEmbedded) return;
       const checkDomChat = () => {

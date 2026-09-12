@@ -114,7 +114,10 @@ export default function App({ isEmbedded = false }: AppProps) {
   // Loyalty
   const [loyaltyAccounts, setLoyaltyAccounts] = useState<Record<string, LoyaltyAccount>>(INITIAL_LOYALTY);
 
-  // Message input state
+   // Scraped active chat from WhatsApp Web DOM header
+  const [domActiveChat, setDomActiveChat] = useState<{ name: string; phone: string; isGroup: boolean } | null>(null);
+
+   // Message input state
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -140,9 +143,6 @@ export default function App({ isEmbedded = false }: AppProps) {
   useEffect(() => {
     scrollToBottom();
   }, [activeChat?.messages]);
-
-  // Scraped active chat from WhatsApp Web DOM header
-  const [domActiveChat, setDomActiveChat] = useState<{ name: string; phone: string; isGroup: boolean } | null>(null);
 
   useEffect(() => {
     if (!isEmbedded) return;

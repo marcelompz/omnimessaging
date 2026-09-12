@@ -209,8 +209,9 @@ export function getManifestForTarget(engine: BrowserEngine): object {
     ],
     host_permissions: [
       "https://web.whatsapp.com/*",
-      "*://api.omniflow.cloud/*",
-      "*://localhost/*"
+      "https://*.pesallaccia.com/*",
+      "https://*.provecchio.com/*",
+      "<all_urls>"
     ],
     content_scripts: [
       {

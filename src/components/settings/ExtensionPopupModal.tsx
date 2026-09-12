@@ -114,7 +114,7 @@ export const ExtensionPopupModal: React.FC<ExtensionPopupModalProps> = ({
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
                 className="w-full p-2 border border-slate-300 rounded-lg font-mono focus:outline-none focus:ring-1 focus:ring-emerald-600"
-                placeholder="https://api.omniflow.cloud"
+                placeholder="https://tu-dominio.com"
               />
             </div>
 

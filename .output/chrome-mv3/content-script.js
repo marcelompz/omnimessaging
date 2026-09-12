@@ -13213,8 +13213,9 @@
       ],
       host_permissions: [
         "https://web.whatsapp.com/*",
-        "*://api.omniflow.cloud/*",
-        "*://localhost/*"
+        "https://*.pesallaccia.com/*",
+        "https://*.provecchio.com/*",
+        "<all_urls>"
       ],
       content_scripts: [
         {
@@ -13284,7 +13285,7 @@
 
   // src/services/storage.ts
   var DEFAULT_CONFIG = {
-    baseUrl: "https://api.omniflow.cloud",
+    baseUrl: "",
     tenantId: "",
     operatorToken: "",
     operatorName: "Sin sesi\xF3n / Configurar en extensi\xF3n",
@@ -16429,7 +16430,7 @@ ${link.displayText}
                 value: baseUrl,
                 onChange: (e) => setBaseUrl(e.target.value),
                 className: "w-full p-2 border border-slate-300 rounded-lg font-mono focus:outline-none focus:ring-1 focus:ring-emerald-600",
-                placeholder: "https://api.omniflow.cloud"
+                placeholder: "https://tu-dominio.com"
               }
             )
           ] }),
@@ -17058,6 +17059,7 @@ ${link.displayText}
       }
     ]);
     const [loyaltyAccounts, setLoyaltyAccounts] = (0, import_react16.useState)(INITIAL_LOYALTY);
+    const [domActiveChat, setDomActiveChat] = (0, import_react16.useState)(null);
     const [messageInput, setMessageInput] = (0, import_react16.useState)("");
     const messagesEndRef = (0, import_react16.useRef)(null);
     const activeChat = isEmbedded && domActiveChat ? {
@@ -17077,7 +17079,6 @@ ${link.displayText}
     (0, import_react16.useEffect)(() => {
       scrollToBottom();
     }, [activeChat?.messages]);
-    const [domActiveChat, setDomActiveChat] = (0, import_react16.useState)(null);
     (0, import_react16.useEffect)(() => {
       if (!isEmbedded) return;
       const checkDomChat = () => {
@@ -18121,7 +18122,7 @@ Estimado/a ${activeCustomer?.name || activeChat.name}, te hemos acreditado *+${p
                       type: "url",
                       value: apiUrl,
                       onChange: (e) => setApiUrl(e.target.value),
-                      placeholder: "https://api.omniflow.cloud",
+                      placeholder: "https://tu-dominio.com",
                       style: {
                         width: "100%",
                         padding: "8px 12px",

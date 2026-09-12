@@ -14,7 +14,7 @@ export interface OmniFlowConfig {
 }
 
 const DEFAULT_CONFIG: OmniFlowConfig = {
-  baseUrl: "https://api.omniflow.cloud",
+  baseUrl: "",
   tenantId: "",
   operatorToken: "",
   operatorName: "Sin sesión / Configurar en extensión",

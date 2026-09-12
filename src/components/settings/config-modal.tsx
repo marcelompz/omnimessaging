@@ -145,7 +145,7 @@ export const ConfigModal: React.FC<ConfigModalProps> = ({ isOpen, onClose, onSav
               type="url"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="https://api.omniflow.cloud"
+              placeholder="https://tu-dominio.com"
               style={{
                 width: "100%",
                 padding: "8px 12px",
